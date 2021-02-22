@@ -7,7 +7,11 @@ const passport = require("passport");
 const Users = require("../models/Users");
 
 function reg(req, res) {
-  const { name, email, password, password2 } = req.body;
+  let { name, email, password, password2 } = req.body;
+  name = name.toString();
+  email = email.toString();
+  password = password.toString();
+  password2 = password2.toString();
   let errors = [];
 
   // Check all fields are filled
@@ -33,7 +37,6 @@ function reg(req, res) {
       password2,
     });
   } else {
-    email = email.toString();
     var email_query = {
       email: email,
     };
@@ -50,8 +53,6 @@ function reg(req, res) {
             password2,
           });
         } else {
-          name = name.toString();
-          email = email.toString();
           const newUser = Users({
             name,
             email,
