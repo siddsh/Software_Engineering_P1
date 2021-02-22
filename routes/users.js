@@ -6,26 +6,7 @@ const passport = require("passport");
 //
 const Users = require("../models/Users");
 
-// Login Page
-router.get("/login", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.redirect("/dashboard");
-  } else {
-    res.render("login");
-  }
-});
-
-// Register Page
-router.get("/register", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.redirect("/dashboard");
-  } else {
-    res.render("register");
-  }
-});
-
-//Register Handel
-router.post("/register", (req, res) => {
+function reg(req, res) {
   const { name, email, password, password2 } = req.body;
   let errors = [];
 
@@ -58,7 +39,7 @@ router.post("/register", (req, res) => {
     };
     Users.findOne(email_query)
       .then((user) => {
-        if (user) {
+        if (usesr) {
           // If Found, Display error Message
           errors.push({ msg: "User Already Exists!" });
           res.render("register", {
@@ -76,8 +57,8 @@ router.post("/register", (req, res) => {
             password,
           });
           bcrypt.genSalt(10, (err, salt) =>
-            bcrypt.hash(newUser.password, salt, (err, hash) => {
-              if (err) throw err;
+            bcrypt.hash(newUser.password, salt, (err1, hash) => {
+              if (err1) throw err1;
 
               // set password to the hash value of password
               newUser.password = hash;
@@ -99,7 +80,28 @@ router.post("/register", (req, res) => {
       })
       .catch((err) => console.error(err));
   }
+}
+
+// Login Page
+router.get("/login", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.redirect("/dashboard");
+  } else {
+    res.render("login");
+  }
 });
+
+// Register Page
+router.get("/register", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.redirect("/dashboard");
+  } else {
+    res.render("register");
+  }
+});
+
+//Register Handel
+router.post("/register", reg);
 
 //Login Handel
 router.post("/login", (req, res, next) => {
