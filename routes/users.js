@@ -7,7 +7,11 @@ const passport = require("passport");
 const Users = require("../models/Users");
 
 function reg(req, res) {
-  const { name, email, password, password2 } = req.body;
+  let { name, email, password, password2 } = req.body;
+  name = name.toString();
+  email = email.toString();
+  password = password.toString();
+  password2 = password2.toString();
   let errors = [];
 
   // Check all fields are filled
@@ -33,13 +37,12 @@ function reg(req, res) {
       password2,
     });
   } else {
-    // Check if User Exists
-    var email_query = {
+    /*var email_query = {
       email: email,
-    };
-    Users.findOne(email_query)
+    };*/
+    Users.findOne({ email: email })
       .then((user) => {
-        if (usesr) {
+        if (user) {
           // If Found, Display error Message
           errors.push({ msg: "User Already Exists!" });
           res.render("register", {
@@ -50,7 +53,6 @@ function reg(req, res) {
             password2,
           });
         } else {
-          // Create New User
           const newUser = Users({
             name,
             email,
