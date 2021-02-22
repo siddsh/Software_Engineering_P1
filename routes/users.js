@@ -40,47 +40,49 @@ function reg(req, res) {
     /*var email_query = {
       email: email,
     };*/
-    Users.findOne({ email: email })
-      .then((user) => {
-        if (user) {
-          // If Found, Display error Message
-          errors.push({ msg: "User Already Exists!" });
-          res.render("register", {
-            errors,
-            name,
-            email,
-            password,
-            password2,
-          });
-        } else {
-          const newUser = Users({
-            name,
-            email,
-            password,
-          });
-          bcrypt.genSalt(10, (err, salt) =>
-            bcrypt.hash(newUser.password, salt, (err1, hash) => {
-              if (err1) throw err1;
+    Users.findOne({ email: email }, (err, obj) => {
+      if (obj) {
+        console.log(obj);
+        // If Found, Display error Message
+        errors.push({ msg: "User Already Exists!" });
+        res.render("register", {
+          errors,
+          name,
+          email,
+          password,
+          password2,
+        });
+      } else {
+        const newUser = Users({
+          name,
+          email,
+          password,
+        });
+        bcrypt.genSalt(10, (err, salt) =>
+          bcrypt.hash(newUser.password, salt, (err1, hash) => {
+            if (err1) throw err1;
 
-              // set password to the hash value of password
-              newUser.password = hash;
+            // set password to the hash value of password
+            newUser.password = hash;
 
-              // save user details to db
-              newUser
-                .save()
-                .then((user_temp) => {
-                  req.flash(
-                    "success_msg",
-                    `Registration successful, Welcome ${newUser.name}`
-                  );
-                  res.redirect("/users/login");
-                })
-                .catch((err_new) => console.log(err_new));
-            })
-          );
-        }
-      })
-      .catch((err) => console.error(err));
+            // save user details to db
+            newUser
+              .save()
+              .then((user_temp) => {
+                req.flash(
+                  "success_msg",
+                  `Registration successful, Welcome ${newUser.name}`
+                );
+                res.redirect("/users/login");
+              })
+              .catch((err_new) => console.log(err_new));
+          })
+        );
+      }
+    });
+    //  .then((user) => {
+    
+      //.catch((err) => console.error(err));
   }
 }
 
