@@ -33,13 +33,13 @@ function reg(req, res) {
       password2,
     });
   } else {
-    // Check if User Exists
+    email = email.toString();
     var email_query = {
       email: email,
     };
-    Users.findOne(email_query)
+    Users.findOne({ email: email })
       .then((user) => {
-        if (usesr) {
+        if (user) {
           // If Found, Display error Message
           errors.push({ msg: "User Already Exists!" });
           res.render("register", {
