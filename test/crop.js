@@ -21,66 +21,66 @@ async function findListings(Model) {
 
 //findListings(Farmer);
 
-// /*ADD FARMER AND BUYER*/
-// function addItem(item) {
-//   item
-//     .save()
-//     .then(() => {
-//       console.log("SAVED");
-//       mongoose.disconnect(() => {
-//         console.log("END");
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//       mongoose.disconnect(() => {
-//         console.log("END");
-//       });
-//     });
-// }
-// var farmer = new Farmer({
-//   name: "Vikram",
-//   email: "abcd",
-//   password: "abc",
-// });
-// var buyer = new Buyer({
-//   name: "Sid",
-//   email: "abcdef",
-//   password: "abcfe",
-// });
-// addItem(farmer);
-// console.log(farmer);
+/*ADD FARMER AND BUYER*/
+function addItem(item) {
+  item
+    .save()
+    .then(() => {
+      console.log("SAVED");
+      mongoose.disconnect(() => {
+        console.log("END");
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      mongoose.disconnect(() => {
+        console.log("END");
+      });
+    });
+}
+var farmer = new Farmer({
+  name: "Vikram",
+  email: "abcd",
+  password: "abc",
+});
+var buyer = new Buyer({
+  name: "Sid",
+  email: "abcdef",
+  password: "abcfe",
+});
+addItem(farmer);
+console.log(farmer);
 
-// addItem(buyer);
-// console.log(buyer);
+addItem(buyer);
+console.log(buyer);
 
-// //Create crop
-// function addListing(farmer, cropName, cropQuantity) {
-//   var listing = new AvailableCrop({
-//     name: cropName,
-//     seller: farmer._id,
-//     quantity: cropQuantity,
-//   });
-//   addItem(listing);
-//   return Promise.resolve(listing);
-// }
+//Create crop
+function addListing(farmer, cropName, cropQuantity) {
+  var listing = new AvailableCrop({
+    name: cropName,
+    seller: farmer._id,
+    quantity: cropQuantity,
+  });
+  addItem(listing);
+  return Promise.resolve(listing);
+}
+//CONFIRM ORDER
+async function confirmOrder(buyer, order) {
+  AvailableCrop.deleteOne(order).then(() => {
+    console.log("deleted!");
+  });
+  var inProgress = new InProgressCrop({
+    name: order.name,
+    seller: order.seller,
+    buyer: buyer._id,
+    quantity: order.quantity,
+  });
+  addItem(inProgress);
+  var farmer = await Farmer.findById(inProgress.seller);
 
-// async function confirmOrder(buyer, order) {
-//   AvailableCrop.deleteOne(order).then(() => {
-//     console.log("deleted!");
-//   });
-//   var inProgress = new InProgressCrop({
-//     name: order.name,
-//     seller: order.seller,
-//     buyer: buyer._id,
-//     quantity: order.quantity,
-//   });
-//   addItem(inProgress);
-//   var farmer = await Farmer.findById(inProgress.seller);
+  console.log(
+    "Buyer: " + buyer.name + "\n" + "Farmer: " + farmer.name.toString() + "\n"
+  );
+}
 
-//   console.log(
-//     "Buyer: " + buyer.name + "\n" + "Farmer: " + farmer.name.toString() + "\n"
-//   );
-// }
-
-// addListing(farmer, "WEED", "69g").then((order) => confirmOrder(buyer, order));
+addListing(farmer, "Wheat", "69g").then((order) => confirmOrder(buyer, order));
